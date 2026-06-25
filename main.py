@@ -20,7 +20,6 @@ load_dotenv()  # reads .env into os.environ before anything else needs it
 from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -47,8 +46,8 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
-@app.exception_handler(ValidationError)
-async def pydantic_validation_handler(request: Request, exc: ValidationError):
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Make sure validation failures come back as a clean 422, not a 500."""
     logger.warning(f"Rejected malformed event from {request.client.host}: {exc}")
     return JSONResponse(status_code=422, content={"detail": exc.errors()})

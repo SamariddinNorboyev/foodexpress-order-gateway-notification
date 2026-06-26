@@ -28,9 +28,9 @@ class OrderItem(BaseModel):
 
 class OrderCreatedData(BaseModel):
     orderId: UUID
-    customerId: UUID
+    customerId: int
     customerEmail: EmailStr
-    restaurantId: UUID | None = None
+    restaurantId: int | None = None
     items: list[OrderItem]
     totalPrice: float = Field(ge=0)
     currency: str = "UZS"
@@ -40,9 +40,9 @@ class OrderCreatedData(BaseModel):
 
 class OrderStatusChangedData(BaseModel):
     orderId: UUID
-    customerId: UUID
+    customerId: int
     customerEmail: EmailStr
-    courierId: UUID | None = None
+    courierId: int | None = None
     oldStatus: Literal[
         "CREATED", "CONFIRMED", "PREPARING", "READY", "DELIVERING", "DELIVERED", "CANCELLED"
     ]

@@ -30,7 +30,7 @@ class OrderCreatedData(BaseModel):
     orderId: UUID
     customerId: int
     customerEmail: EmailStr
-    restaurantId: int | None = None
+    restaurantId: UUID
     items: list[OrderItem]
     totalPrice: float = Field(ge=0)
     currency: str = "UZS"

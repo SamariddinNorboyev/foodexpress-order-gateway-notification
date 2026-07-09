@@ -1,15 +1,3 @@
-"""
-Event Gateway - the only thing your friend's API ever talks to.
-
-Receives events over HTTPS, validates the API key, validates the
-JSON shape against schemas.py, and only then publishes to RabbitMQ
-(which stays on 127.0.0.1, never exposed to the internet).
-
-If anything is wrong with the request - bad key, bad shape, bad
-status transition - it's rejected here and never reaches RabbitMQ
-or your other apps.
-"""
-
 import logging
 from contextlib import asynccontextmanager
 
@@ -58,6 +46,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def receive_order_created(request: Request, event: OrderCreatedEvent):
     """Receives an order.created event, validates it, publishes to RabbitMQ."""
     payload = event.model_dump(mode="json")
+    
+    # Debug print statement
+    print(f"\n--- [DEBUG] Incoming order-created payload ---\n{payload}\n")
+    
     await publish_event(routing_key="order.created", payload=payload)
     return {"status": "accepted", "eventId": str(event.eventId)}
 
@@ -67,6 +59,10 @@ async def receive_order_created(request: Request, event: OrderCreatedEvent):
 async def receive_order_status_changed(request: Request, event: OrderStatusChangedEvent):
     """Receives an order.status_changed event, validates it, publishes to RabbitMQ."""
     payload = event.model_dump(mode="json")
+    
+    # Debug print statement
+    print(f"\n--- [DEBUG] Incoming order-status-changed payload ---\n{payload}\n")
+    
     await publish_event(routing_key="order.status_changed", payload=payload)
     return {"status": "accepted", "eventId": str(event.eventId)}
 
